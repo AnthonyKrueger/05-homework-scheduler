@@ -1,5 +1,6 @@
 var currentTimeEl = $('#currentDay');
 var schedulerList = $('#schedules')
+var inputList = []
 
 // Set date at top of website
 
@@ -13,7 +14,7 @@ function makeScheduler () {
     for(i = 0; i < 9; i++){
         var row = $("<div></div>").addClass("row");
         var timeLabel = $("<span></span>").addClass("col-1 span6");
-        var inputField = $("<textarea class='span6 col-10 todos' rows='2' required></textarea>").data('index', i);
+        var inputField = $("<textarea class='span6 col-10 todos' rows='2'></textarea>").data('index', i);
         var saveButton = $("<button class ='btn btn-primary col-1 savebtn'>Save</button>").data('index', i);
 
         if(i <= 2){
@@ -34,19 +35,25 @@ function makeScheduler () {
         else {
             inputField.css('background-color', 'lightgrey')
         }
+        inputList.push(inputField);
         schedulerList.append(row);
         row.append(timeLabel);
         row.append(inputField);
         row.append(saveButton);
 
+        // Give all save-buttons click functions
+        
     }
+    $(".savebtn").on("click", function() {
+        var index = $(this).data("index")
+        var chosenInput = inputList[index];
+        store = JSON.parse(localStorage.getItem('todos'))
+        store[index] = chosenInput.val()
+        localStorage.setItem('todos', JSON.stringify(store))
+        checkStorage();
+    })
 }
 
-// Give all save-buttons click functions
-
-$(".savebtn").on("click", function() {
-    console.log($(this).data("index"));
-})
 
 // Create localstorage array if not already present
 
@@ -68,8 +75,7 @@ function checkStorage() {
         }
     }
 }
-var teststore = ["thingtodo", "", "", "", "", "another", "", "", ""]
-localStorage.setItem('todos', JSON.stringify(teststore))
+
 setDate();
 makeScheduler();
 checkStorage();
